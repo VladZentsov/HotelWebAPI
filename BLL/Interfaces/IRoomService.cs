@@ -15,6 +15,7 @@ namespace BLL.Interfaces
         Task<IEnumerable<RoomFullInfo>> GetBookedRoomsWithDetails();
         Task<IEnumerable<IEnumerable<RoomsSettlement>>> GetRoomsSettlement();
         Task<RoomFullInfo> GetBookedRoomWithDetailsById(string id);
+        Task<IEnumerable<RoomDto>> RoomsFilterSearch(RoomFilter roomFilter);
 
     }
 }

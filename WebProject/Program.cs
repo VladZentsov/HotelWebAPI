@@ -7,9 +7,11 @@ using DAL.Interfaces;
 using DAL.Repositories;
 using DAL.UnitOfWork;
 using HotelTests.DALTests;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Configuration;
+using WebProject.Filters;
 
 static void AddInMemoryData(IApplicationBuilder app)
 {
@@ -47,6 +49,11 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IRoomService, RoomService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add(typeof(HotelNotFoundExceptionFilterAttribute));
+});
 
 
 //builder.Services.AddDbContext<IHotelDbContext, HotelDbContext>(options =>

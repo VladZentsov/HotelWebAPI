@@ -70,6 +70,12 @@ namespace WebProject.Controllers
             return Ok(value);
         }
 
+        [HttpGet("roomFilter")]
+        public async Task<ActionResult> FilteredRooms([FromBody] RoomFilter value)
+        {
+            return Content(JsonConvert.SerializeObject(await _roomService.RoomsFilterSearch(value)));
+        }
+
 
 
         //// POST: api/customers

@@ -201,25 +201,16 @@ namespace BLL.Services
 
         public async Task<IEnumerable<RoomDto>> GetAllFreeRooms(RoomFilter roomFilter)
         {
-            var rooms = await _unitOfWork.RoomRepository.GetAllAsync();
-            var books = await _unitOfWork.BookRepository.GetAllAsync();
+            var roomsDto = _mapper.Map<IEnumerable<RoomDto>>(await GetFilterRooms(roomFilter));
 
-            if(roomFilter.StartPrice!=null)
-                rooms = rooms.Where(room=> room.Price >= roomFilter.StartPrice).ToList();
+            return roomsDto;   
+        }
 
-            if (roomFilter.EndPrice != null)
-                rooms = rooms.Where(room => room.Price <= roomFilter.EndPrice).ToList();
-
-            if (roomFilter.VisitorsNumber != null)
-                rooms = rooms.Where(r => r.VisitorsNumber == roomFilter.VisitorsNumber);
-
-            rooms = DateOverlapDetector(roomFilter, books, rooms);
-
-            var roomsDto = _mapper.Map<IEnumerable<RoomDto>>(rooms);
+        public async Task<IEnumerable<RoomDto>> RoomsFilterSearch(RoomFilter roomFilter)
+        {
+            var roomsDto = _mapper.Map<IEnumerable<RoomDto>>(await GetFilterRooms(roomFilter));
 
             return roomsDto;
-
-            
         }
 
         private IEnumerable<Room> DateOverlapDetector(RoomFilter roomFilter, IEnumerable<Book> books, IEnumerable<Room> rooms)
@@ -248,5 +239,24 @@ namespace BLL.Services
             return result;
         }
 
+
+        private async Task<IEnumerable<Room>> GetFilterRooms(RoomFilter roomFilter)
+        {
+            var rooms = await _unitOfWork.RoomRepository.GetAllAsync();
+            var books = await _unitOfWork.BookRepository.GetAllAsync();
+
+            if (roomFilter.StartPrice != null)
+                rooms = rooms.Where(room => room.Price >= roomFilter.StartPrice).ToList();
+
+            if (roomFilter.EndPrice != null)
+                rooms = rooms.Where(room => room.Price <= roomFilter.EndPrice).ToList();
+
+            if (roomFilter.VisitorsNumber != null)
+                rooms = rooms.Where(r => r.VisitorsNumber == roomFilter.VisitorsNumber);
+
+            rooms = DateOverlapDetector(roomFilter, books, rooms);
+
+            return rooms;
+        }
     }
 }

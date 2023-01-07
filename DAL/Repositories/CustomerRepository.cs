@@ -1,6 +1,7 @@
 ﻿using DAL.Entities;
 using DAL.HotelDatabaseContext;
 using DAL.Interfaces;
+using DAL.Validation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace DAL.Repositories
             result = await _customers.FirstOrDefaultAsync(x => x.Id == id);
 
             if (result==null)
-                throw new ArgumentException("Given Id not found.", "id");
+                throw new HotelNotFoundException("Given Id not found.", "id");
 
             return result;
 
@@ -59,7 +60,7 @@ namespace DAL.Repositories
                 .FirstOrDefaultAsync(z => z.Id == id);
 
             if (result == null)
-                throw new ArgumentException("Given Id not found.", "id");
+                throw new HotelNotFoundException("Given Id not found.", "id");
 
             return result;
 
