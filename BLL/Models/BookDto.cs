@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Models
 {
-    public class BookDto: BaseDto, IBook
+    public class BookDto : BaseDto, IBook
     {
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

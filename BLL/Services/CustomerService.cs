@@ -57,13 +57,16 @@ namespace BLL.Services
 
         }
 
-        public async Task UpdateAsync(CustomerDto model)
+        public async Task<CustomerDto> UpdateAsync(CustomerDto model)
         {
+
             var customer = _mapper.Map<Customer>(model);
 
             _unitOfWork.CustomerRepository.Update(customer);
 
             await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<Customer, CustomerDto>(customer);
         }
     }
 }

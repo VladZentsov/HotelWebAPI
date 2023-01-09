@@ -16,6 +16,7 @@ namespace WebProject.Filters
                 Content = $"In method {actionName} an exception occurred: \n {exceptionMessage} \n {exceptionStack}",
                 StatusCode = (int?)HttpStatusCode.NotFound
             };
+
             context.ExceptionHandled = true;
 
 

@@ -36,7 +36,10 @@ namespace HotelTests.BusinessTests
             var expectedCustomer = UnitTestHelper.GetCustomerViaInfoModel("1");
 
             //act
-             await bookService.CreateBook(UnitTestHelper.GetBookCreateModel("1"));
+            var bookToCreate = UnitTestHelper.GetBookCreateModel("1");
+            bookToCreate.CustomerId = null;
+
+            await bookService.CreateBook(bookToCreate);
 
             //assert
             mockUnitOfWork.Verify(x => x.BookRepository.Add(It.Is<Book>(x=> bookEqualityComparer.Equals(x,expected))), Times.Once);
@@ -54,10 +57,15 @@ namespace HotelTests.BusinessTests
             BookEqualityComparer bookEqualityComparer = new BookEqualityComparer();
 
             var expected = UnitTestHelper.GetBookViaInfoModel("2");
+            expected.Id = "1";
+            expected.CustomerId = "3";
             var expectedCustomer = UnitTestHelper.GetCustomerViaInfoModel("2");
 
             //act
-            await bookService.CreateBook(UnitTestHelper.GetBookCreateModel("2"));
+            var bookToCreate = UnitTestHelper.GetBookCreateModel("2");
+            bookToCreate.CustomerId = null;
+
+            await bookService.CreateBook(bookToCreate);
 
             //assert
             mockUnitOfWork.Verify(x => x.BookRepository.Add(It.Is<Book>(x => bookEqualityComparer.Equals(x, expected))), Times.Once);
@@ -232,9 +240,11 @@ namespace HotelTests.BusinessTests
 
             List<(DateTime, DateTime)> days = new List<(DateTime, DateTime)>();
 
-            days.Add((new DateTime(2022, 12, 03), new DateTime(2023, 02, 15)));
+            DateTime now = DateTime.Now;
+
+            days.Add((new DateTime(now.Year, now.Month, now.Day), new DateTime(2023, 02, 15)));
             days.Add((new DateTime(2023, 03, 25), new DateTime(2023, 05, 31)));
-            days.Add((new DateTime(2023, 07, 02), new DateTime(2023, 12, 03)));
+            days.Add((new DateTime(2023, 07, 02), new DateTime(2024, 1, 09)));
 
             expected.Days = days;
 
@@ -242,6 +252,10 @@ namespace HotelTests.BusinessTests
             mockUnitOfWork
                 .Setup(m => m.BookRepository.GetAllAsync())
                 .ReturnsAsync(UnitTestHelper.Books);
+
+            mockUnitOfWork.Setup(x => x.RoomRepository.GetByIdAsync("5"))
+                .ReturnsAsync(UnitTestHelper.GetRoom("5"));
+
 
             var bookService = new BookService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
 

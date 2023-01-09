@@ -29,6 +29,9 @@ namespace BLL
             CreateMap<BookFullInfo, Customer>()
                 .ReverseMap();
 
+            CreateMap<BookFullInfo, BookCreateModel>()
+                .ReverseMap();
+
             CreateMap<BookCreateModel, Customer>()
                 .ReverseMap();
 
@@ -36,7 +39,6 @@ namespace BLL
 
             CreateMap<RoomDto, Room>()
                 .ForMember(x => x.ImgName, opt => opt.Condition(src => (src.imgName != null)));
-            //.ForAllMembers(x => x.Condition((src, dest, sourceValue) => sourceValue != null));
 
             CreateMap<RoomFullInfo, Room>()
                 .ReverseMap();

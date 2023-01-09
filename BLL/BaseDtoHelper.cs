@@ -12,9 +12,11 @@ namespace BLL
 {
     public class BaseDtoHelper
     {
-        public static async Task<string> GetNextId(IEnumerable<BaseEntity> baseEntities)
+        public static async Task<string> GetNextId(IEnumerable<string> ids)
         {
-            return (Convert.ToInt32(baseEntities.Max(x => Convert.ToInt32(x.Id))) + 1).ToString();
+            if (ids == null || ids.Count() == 0)
+                return "1";
+            return (Convert.ToInt32(ids.Max(x => Convert.ToInt32(x))) + 1).ToString();
         }
     }
 }

@@ -65,9 +65,9 @@ namespace WebProject.Controllers
         [HttpPost("update")]
         public async Task<ActionResult> Update([FromBody] RoomWithImages value)
         {
-            await _roomService.UpdateAsync(value);
+            var result = await _roomService.UpdateAsync(value);
 
-            return Ok(value);
+            return Content(JsonConvert.SerializeObject(result));
         }
 
         [HttpGet("roomFilter")]

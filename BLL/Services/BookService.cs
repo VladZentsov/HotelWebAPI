@@ -66,13 +66,15 @@ namespace BLL.Services
             return bookFullInfo;
         }
 
-        public async Task UpdateAsync(BookDto model)
+        public async Task<BookDto> UpdateAsync(BookDto model)
         {
             var book = _mapper.Map<Book>(model);
 
             _unitOfWork.BookRepository.Update(book);
 
            await _unitOfWork.SaveAsync();
+
+            return _mapper.Map<Book, BookDto>(book);
         }
 
         public async Task CreateBook(BookCreateModel customerBookInfoModel)
@@ -81,20 +83,26 @@ namespace BLL.Services
 
             Book book = _mapper.Map<BookCreateModel, Book>(customerBookInfoModel);
 
-            Customer customer = (await _unitOfWork.CustomerRepository.GetAllAsync())
-                .FirstOrDefault(c => c.Email == customerBookInfoModel.Email && c.Name == customerBookInfoModel.Name && c.Surname == customerBookInfoModel.Surname);
-
-            if (customer == null)
+            if (customerBookInfoModel.CustomerId == null)
             {
-                customer = _mapper.Map<Customer>(customerBookInfoModel);
+                Customer customer = (await _unitOfWork.CustomerRepository.GetAllAsync())
+                    .FirstOrDefault(c => c.Email == customerBookInfoModel.Email && c.Name == customerBookInfoModel.Name && c.Surname == customerBookInfoModel.Surname);
 
-                customer.Id = await BaseDtoHelper.GetNextId(await _unitOfWork.CustomerRepository.GetAllAsync());
-                _unitOfWork.CustomerRepository.Add(customer);
+                if (customer == null)
+                {
+                    customer = _mapper.Map<Customer>(customerBookInfoModel);
+
+                    customer.Id = await BaseDtoHelper.GetNextId((await _unitOfWork.CustomerRepository.GetAllAsync()).Select(x => x.Id));
+                    _unitOfWork.CustomerRepository.Add(customer);
+                }
+
+                book.CustomerId = customer.Id;
             }
+            else
+                book.CustomerId = customerBookInfoModel.CustomerId;
 
-            book.CustomerId = customer.Id;
 
-            book.Id = await BaseDtoHelper.GetNextId(await _unitOfWork.BookRepository.GetAllAsync());
+            book.Id = await BaseDtoHelper.GetNextId((await _unitOfWork.BookRepository.GetAllAsync()).Select(x=>x.Id));
 
             _unitOfWork.BookRepository.Add(book);
 

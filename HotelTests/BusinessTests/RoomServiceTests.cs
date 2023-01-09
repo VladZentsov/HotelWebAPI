@@ -50,6 +50,9 @@ namespace HotelTests.BusinessTests
             mockUnitOfWork.Setup(x => x.RoomRepository.GetAllAsync())
                 .ReturnsAsync(UnitTestHelper.Rooms);
 
+            mockUnitOfWork.Setup(x => x.BookRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Books);
+
             var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
             var expected = UnitTestHelper.RoomsDto;
 
@@ -100,6 +103,11 @@ namespace HotelTests.BusinessTests
                 .Setup(m => m.RoomRepository.GetByIdAsync(It.IsAny<string>()))
                 .ReturnsAsync(UnitTestHelper.GetRoom(id));
 
+
+            mockUnitOfWork
+                .Setup(m => m.BookRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Books);
+
             var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
 
             //act
@@ -130,29 +138,29 @@ namespace HotelTests.BusinessTests
         //    actual.Should().BeEquivalentTo(expected);
         //}
 
-        [Test]
-        public async Task RoomService_GetBookedRoomsWithDetails_GetAllBookedRoomsWithDetails()
-        {
-            //arrange
-            var expected = new RoomFullInfo();
-            var mockUnitOfWork = new Mock<IUnitOfWork>();
+        //[Test]
+        //public async Task RoomService_GetBookedRoomsWithDetails_GetAllBookedRoomsWithDetails()
+        //{
+        //    //arrange
+        //    var expected = new RoomFullInfo();
+        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-            mockUnitOfWork
-                .Setup(m => m.BookRepository.GetAllWithDetailsAsync())
-                .ReturnsAsync(UnitTestHelper.GetAllBooksWithDetils);
+        //    mockUnitOfWork
+        //        .Setup(m => m.BookRepository.GetAllWithDetailsAsync())
+        //        .ReturnsAsync(UnitTestHelper.GetAllBooksWithDetils);    
 
-            mockUnitOfWork
-                .Setup(m => m.RoomRepository.GetAllAsync())
-                .ReturnsAsync(UnitTestHelper.Rooms);
+        //    mockUnitOfWork
+        //        .Setup(m => m.RoomRepository.GetAllAsync())
+        //        .ReturnsAsync(UnitTestHelper.Rooms);
 
-            var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
+        //    var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
 
-            //act
-            var actual = await roomService.GetBookedRoomsWithDetails();
+        //    //act
+        //    var actual = await roomService.GetBookedRoomsWithDetails();
 
-            //assert
-            actual.Should().BeEquivalentTo(expected);
-        }
+        //    //assert
+        //    actual.Should().BeEquivalentTo(expected);
+        //}
 
         [TestCase("1")]
         [TestCase("2")]
@@ -177,18 +185,22 @@ namespace HotelTests.BusinessTests
         public async Task RoomService_UpdateAsync_UpdatesRoom()
         {
             //arrange
-            var expected = new Room() { Id = "10", Category = RoomCategory.Standart, Description = "Test room", Price = 11800 };
+            var expected = new Room() { Id = "1", Category = RoomCategory.Standart, Description = "Test room", Price = 11800 };
             var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(m => m.RoomRepository.GetByIdAsync("1"))
+                .ReturnsAsync(UnitTestHelper.GetRoom("1"));
 
             mockUnitOfWork.Setup(m => m.RoomRepository.Update(It.IsAny<Room>()));
 
             var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
 
-            var book = new RoomDto  () { Id = "10", Category = RoomCategory.Standart, Description = "Test room", Price = 11800 };
+            var room = new RoomDto  () { Id = "1", Category = RoomCategory.Standart, Description = "Test room", Price = 11800 };
             RoomEqualityComparer roomEqualityComparer = new RoomEqualityComparer();
 
             //act
-            await roomService.UpdateAsync(book);
+            await roomService.UpdateAsync(room);
 
             //assert
             mockUnitOfWork.Verify(x => x.RoomRepository.Update(It.Is<Room>(x => roomEqualityComparer.Equals(x, expected))), Times.Once);

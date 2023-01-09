@@ -54,5 +54,13 @@ namespace WebProject.Controllers
             return Ok(value);
         }
 
+        [HttpPost("update")]
+        public async Task<ActionResult> Update([FromBody] BookDto value)
+        {
+            var result = await _bookService.UpdateAsync(value);
+
+            return Content(JsonConvert.SerializeObject(result));
+        }
+
     }
 }

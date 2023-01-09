@@ -46,32 +46,7 @@ namespace BLL.Services
 
             foreach (var room in roomsDto)
             {
-                var roomBooks = (await _unitOfWork.BookRepository.GetAllAsync()).Where(b => b.RoomId == room.Id && b.EndDate > DateTime.Now);
-
-                if (roomBooks == null || roomBooks.Count() == 0)
-                {
-                    room.FirstDateForSettelment = DateTime.Now;
-                }
-                else
-                {
-                    roomBooks.OrderBy(r => r.StartDate);
-
-                    if (roomBooks.ElementAt(0).StartDate > DateTime.Now)
-                        room.FirstDateForSettelment = DateTime.Now;
-                    else
-                    {
-                        for (int i = 0; i < roomBooks.Count()-1; i++)
-                        {
-                            if (roomBooks.ElementAt(i).StartDate < roomBooks.ElementAt(i+1).EndDate.AddDays(-1)&& roomBooks.ElementAt(i).StartDate>=DateTime.Now.AddDays(-1))
-                            {
-                                room.FirstDateForSettelment = roomBooks.ElementAt(i).StartDate.AddDays(1);
-                                break;
-                            }
-                        }
-                        if (room.FirstDateForSettelment == null)
-                            room.FirstDateForSettelment = roomBooks.ElementAt(roomBooks.Count() - 1).EndDate;
-                    }
-                }
+                room.FirstDateForSettelment = await GetFirstDateForSettelment(room);
             }
 
             return roomsDto;
@@ -83,6 +58,8 @@ namespace BLL.Services
 
             var RoomDto = _mapper.Map<RoomDto>(room);
 
+            RoomDto.FirstDateForSettelment = await GetFirstDateForSettelment(RoomDto);
+
             return RoomDto;
 
         }
@@ -90,6 +67,7 @@ namespace BLL.Services
         public async Task<RoomWithImages> GetByIdWithDetailsAsync(string id)
         {
             var room = await _unitOfWork.RoomRepository.GetByIdWithDetailsAsync(id);
+
 
             var roomFullInfo = _mapper.Map<RoomWithImages>(room);
 
@@ -188,7 +166,7 @@ namespace BLL.Services
 
 
 
-        public async Task UpdateAsync(RoomDto model)
+        public async Task<RoomDto> UpdateAsync(RoomDto model)
         {
             var dest = await _unitOfWork.RoomRepository.GetByIdAsync(model.Id);
 
@@ -197,11 +175,18 @@ namespace BLL.Services
             _unitOfWork.RoomRepository.Update(dest);
 
             await _unitOfWork.SaveAsync();
+
+            return _mapper.Map< Room, RoomDto >(dest);
         }
 
         public async Task<IEnumerable<RoomDto>> GetAllFreeRooms(RoomFilter roomFilter)
         {
             var roomsDto = _mapper.Map<IEnumerable<RoomDto>>(await GetFilterRooms(roomFilter));
+
+            foreach (var room in roomsDto)
+            {
+                room.FirstDateForSettelment = await GetFirstDateForSettelment(room);
+            }
 
             return roomsDto;   
         }
@@ -257,6 +242,39 @@ namespace BLL.Services
             rooms = DateOverlapDetector(roomFilter, books, rooms);
 
             return rooms;
+        }
+
+        private async Task<DateTime> GetFirstDateForSettelment(RoomDto room)
+        {
+            var roomBooks = (await _unitOfWork.BookRepository.GetAllAsync()).Where(b => b.RoomId == room.Id && b.EndDate > DateTime.Now.Date);
+
+            DateTime FirstDateForSettelment = new DateTime();
+
+            if (roomBooks == null || roomBooks.Count() == 0)
+            {
+                FirstDateForSettelment = DateTime.Now.Date;
+            }
+            else
+            {
+                roomBooks.OrderBy(r => r.StartDate);
+
+                if (roomBooks.ElementAt(0).StartDate > DateTime.Now)
+                    FirstDateForSettelment = DateTime.Now.Date;
+                else
+                {
+                    for (int i = 0; i < roomBooks.Count() - 1; i++)
+                    {
+                        if (roomBooks.ElementAt(i).StartDate < roomBooks.ElementAt(i + 1).EndDate.AddDays(-1) && roomBooks.ElementAt(i).StartDate >= DateTime.Now.Date.AddDays(-1))
+                        {
+                            FirstDateForSettelment = roomBooks.ElementAt(i).StartDate.AddDays(1);
+                            break;
+                        }
+                    }
+                    if (room.FirstDateForSettelment == null)
+                        FirstDateForSettelment = roomBooks.ElementAt(roomBooks.Count() - 1).EndDate;
+                }
+            }
+            return FirstDateForSettelment;
         }
     }
 }

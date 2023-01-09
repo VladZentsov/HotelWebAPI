@@ -12,7 +12,7 @@ namespace Business.Interfaces
 
         Task AddAsync(TModel model);
 
-        Task UpdateAsync(TModel model);
+        Task<TModel> UpdateAsync(TModel model);
 
         Task DeleteAsync(string modelId);
     }

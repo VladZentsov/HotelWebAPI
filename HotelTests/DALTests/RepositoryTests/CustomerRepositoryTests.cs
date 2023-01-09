@@ -1,6 +1,7 @@
 ﻿using DAL.Entities;
 using DAL.HotelDatabaseContext;
 using DAL.Repositories;
+using DAL.Validation;
 using HotelTests.DALTests.EqualityComparer;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace HotelTests.DALTests.RepositoryTests
             var customerRepository = new CustomerRepository(context);
 
             //act + assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await customerRepository.GetByIdAsync("999"));
+            var ex = Assert.ThrowsAsync<HotelNotFoundException>(async () => await customerRepository.GetByIdAsync("999"));
         }
 
         [TestCase("1")]
@@ -65,7 +66,7 @@ namespace HotelTests.DALTests.RepositoryTests
             var customerRepo = new CustomerRepository(context);
 
             //act + assert
-            var ex = Assert.ThrowsAsync<ArgumentException>(async () => await customerRepo.GetByIdWithDetailsAsync("999"));
+            var ex = Assert.ThrowsAsync<HotelNotFoundException>(async () => await customerRepo.GetByIdWithDetailsAsync("999"));
         }
 
         [Test]
