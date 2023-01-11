@@ -117,50 +117,169 @@ namespace HotelTests.BusinessTests
             actual.Should().BeEquivalentTo(expected);
         }
 
-        //[TestCase("1")]
-        //[TestCase("2")]
-        //public async Task RoomService_GetByIdWithDetailsAsync_ReturnsRoomDtoWithDetails(string id)
-        //{
-        //    //arrange
-        //    var expected = UnitTestHelper.GetRoomDto(id);
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+        [TestCase("1")]
+        [TestCase("2")]
+        public async Task RoomService_GetByIdWithDetailsAsync_ReturnsRoomDtoWithDetails(string id)
+        {
+            //arrange
+            var expected = UnitTestHelper.GetRoomDto(id);
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        //    mockUnitOfWork
-        //        .Setup(m => m.RoomRepository.GetByIdAsync(It.IsAny<string>()))
-        //        .ReturnsAsync(UnitTestHelper.GetRoom(id));
+            mockUnitOfWork
+                .Setup(m => m.RoomRepository.GetByIdAsync(It.IsAny<string>()))
+                .ReturnsAsync(UnitTestHelper.GetRoom(id));
 
-        //    var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
+            mockUnitOfWork.Setup(x => x.RoomRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Rooms);
 
-        //    //act
-        //    var actual = await roomService.GetByIdAsync(id);
+            mockUnitOfWork.Setup(x => x.BookRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Books);
 
-        //    //assert
-        //    actual.Should().BeEquivalentTo(expected);
-        //}
+            var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
 
-        //[Test]
-        //public async Task RoomService_GetBookedRoomsWithDetails_GetAllBookedRoomsWithDetails()
-        //{
-        //    //arrange
-        //    var expected = new RoomFullInfo();
-        //    var mockUnitOfWork = new Mock<IUnitOfWork>();
+            //act
+            var actual = await roomService.GetByIdAsync(id);
 
-        //    mockUnitOfWork
-        //        .Setup(m => m.BookRepository.GetAllWithDetailsAsync())
-        //        .ReturnsAsync(UnitTestHelper.GetAllBooksWithDetils);    
+            //assert
+            actual.Should().BeEquivalentTo(expected);
+        }
 
-        //    mockUnitOfWork
-        //        .Setup(m => m.RoomRepository.GetAllAsync())
-        //        .ReturnsAsync(UnitTestHelper.Rooms);
+        [Test]
+        public async Task RoomService_GetBookedRoomsWithDetails_GetAllBookedRoomsWithDetails()
+        {
+            //arrange
+            var expected = new List<RoomFullInfo>();
+            expected.Add(new RoomFullInfo
+            {
+                BooksAndCustomersInfo = new List<(BookDto, CustomerDto)>
+                {
+                    (new BookDto()
+                    {
+                        CustomerId = "2",
+                        EndDate = new DateTime(2023, 02, 16),
+                        StartDate = new DateTime(2020, 09, 26),
+                        Id = "7",
+                        IsPaymentComplete = false,
+                        Price = 2100,
+                        RoomId = "4"
+                    }, new CustomerDto()
+                    {
+                        Id = "2",
+                        Email = "ArtemI@gmil.com",
+                        Name = "Artem",
+                        Surname = "Ivanov"
+                    }),
 
-        //    var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
+                    (new BookDto()
+                    {
+                        CustomerId = "3",
+                        EndDate = new DateTime(2023, 04, 7),
+                        StartDate = new DateTime(2020, 10, 2),
+                        Id = "8",
+                        IsPaymentComplete = false,
+                        Price = 1900,
+                        RoomId = "4"
+                    }, new CustomerDto()
+                    {
+                        Id = "3",
+                        Email = "AlexeyP@gmil.com",
+                        Name = "Alexey",
+                        Surname = "Petrov"
+                    })
+                },
 
-        //    //act
-        //    var actual = await roomService.GetBookedRoomsWithDetails();
+                Category = RoomCategory.Lux,
+                Description = "Lux room in hotel",
+                Id = "4",
+                Price = 2000,
+                VisitorsNumber = 3,
+                imgName = "Main-Lux-1",
 
-        //    //assert
-        //    actual.Should().BeEquivalentTo(expected);
-        //}
+            });
+
+            expected.Add(new RoomFullInfo
+            {
+                BooksAndCustomersInfo = new List<(BookDto, CustomerDto)>
+                {
+                    (new BookDto()
+                    {
+                        CustomerId = "4",
+                        EndDate = new DateTime(2023, 03, 25),
+                        StartDate = new DateTime(2023, 02, 16),
+                        Id = "9",
+                        IsPaymentComplete = false,
+                        Price = 2300,
+                        RoomId = "5"
+                    }, new CustomerDto()
+                    {
+                        Id = "4",
+                        Email = "IvanO@gmil.com",
+                        Name = "Ivan",
+                        Surname = "Ostrovsky"
+                    }),
+
+                    (new BookDto()
+                    {
+                        CustomerId = "4",
+                        EndDate = new DateTime(2023, 07, 2),
+                        StartDate = new DateTime(2023, 6, 1),
+                        Id = "10",
+                        IsPaymentComplete = false,
+                        Price = 2400,
+                        RoomId = "5"
+                    }, new CustomerDto()
+                    {
+                        Id = "4",
+                        Email = "IvanO@gmil.com",
+                        Name = "Ivan",
+                        Surname = "Ostrovsky"
+                    })
+                },
+
+                Category = RoomCategory.Duplex,
+                Description = "Duplex room in hotel",
+                Id = "5",
+                Price = 2500,
+                VisitorsNumber = 6,
+                imgName = "Main-Duplex-1",
+
+            });
+
+            //var expected = UnitTestHelper.GetBookeRoo
+            var mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            mockUnitOfWork
+                .Setup(m => m.BookRepository.GetAllWithDetailsAsync())
+                .ReturnsAsync(UnitTestHelper.GetAllBooksWithDetils);
+
+            mockUnitOfWork
+                .Setup(m => m.BookRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Books);
+
+            mockUnitOfWork
+                .Setup(m => m.RoomRepository.GetAllAsync())
+                .ReturnsAsync(UnitTestHelper.Rooms);
+
+            mockUnitOfWork
+                .Setup(m => m.CustomerRepository.GetByIdAsync("2"))
+                .ReturnsAsync(UnitTestHelper.GetCustomer("2"));
+
+            mockUnitOfWork
+                .Setup(m => m.CustomerRepository.GetByIdAsync("3"))
+                .ReturnsAsync(UnitTestHelper.GetCustomer("3"));
+
+            mockUnitOfWork
+            .Setup(m => m.CustomerRepository.GetByIdAsync("4"))
+            .ReturnsAsync(UnitTestHelper.GetCustomer("4"));
+
+            var roomService = new RoomService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperProfile());
+
+            //act
+            var actual = await roomService.GetBookedRoomsWithDetails();
+
+            //assert
+            actual.Should().BeEquivalentTo(expected);
+        }
 
         [TestCase("1")]
         [TestCase("2")]

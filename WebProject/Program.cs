@@ -13,6 +13,7 @@ using System;
 using System.Configuration;
 using WebProject.Filters;
 
+
 static void AddInMemoryData(IApplicationBuilder app)
 {
     var scope = app.ApplicationServices.CreateScope();

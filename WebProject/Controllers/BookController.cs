@@ -59,6 +59,7 @@ namespace WebProject.Controllers
         {
             var result = await _bookService.UpdateAsync(value);
 
+
             return Content(JsonConvert.SerializeObject(result));
         }
 
