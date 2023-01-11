@@ -11,8 +11,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Configuration;
+using System.Runtime.CompilerServices;
 using WebProject.Filters;
-
+[assembly: InternalsVisibleTo("WebProject.Tests")]
 
 static void AddInMemoryData(IApplicationBuilder app)
 {

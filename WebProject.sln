@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebProject", "WebProject\We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{C6FAF7E0-8426-4F8A-BB15-319B0C6937A1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelTests", "HotelTests\HotelTests.csproj", "{29EC45E9-06CF-4896-9D44-E28CCF9D8BDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebProject.Tests", "HotelTests\WebProject.Tests.csproj", "{29EC45E9-06CF-4896-9D44-E28CCF9D8BDB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "BLL\BLL.csproj", "{AE7B9455-7B17-41F3-A82F-AC8F935E7104}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryDB", "InMemoryDB\InMemoryDB.csproj", "{6401633F-5335-4641-8E5A-8E28DEDA414F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InMemoryDB", "InMemoryDB\InMemoryDB.csproj", "{6401633F-5335-4641-8E5A-8E28DEDA414F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -48,6 +48,7 @@ namespace HotelTests.DALTests
 
 
         public static void SeedData(HotelDbContext context)
+        
         {
             context.Customers.AddRange(Customers);
             context.Rooms.AddRange(Rooms);

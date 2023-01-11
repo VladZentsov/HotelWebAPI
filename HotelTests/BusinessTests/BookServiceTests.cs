@@ -244,7 +244,7 @@ namespace HotelTests.BusinessTests
 
             days.Add((new DateTime(now.Year, now.Month, now.Day), new DateTime(2023, 02, 15)));
             days.Add((new DateTime(2023, 03, 25), new DateTime(2023, 05, 31)));
-            days.Add((new DateTime(2023, 07, 02), new DateTime(2024, 1, 09)));
+            days.Add((new DateTime(2023, 07, 02), new DateTime(2024, 1, 11)));
 
             expected.Days = days;
 
